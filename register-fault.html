@@ -1,1 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Fault - CMRL AFC</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <i class="fas fa-metro"></i>
+                <span class="logo-text">CMRL AFC</span>
+            </div>
+            <button class="sidebar-toggle d-lg-none" id="sidebarToggle">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
 
+        <nav class="sidebar-nav">
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="register-fault.html" class="nav-link active">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Register Fault</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fault-list.html" class="nav-link">
+                        <i class="fas fa-list"></i>
+                        <span>Fault List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div>
+                    <div class="user-name" id="userName">User</div>
+                    <small id="userRole" class="text-muted">CMO</small>
+                </div>
+            </div>
+            <button class="btn btn-sm btn-outline-danger w-100 mt-2" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+            <div class="container-fluid">
+                <button class="btn btn-light sidebar-toggle d-lg-none" id="sidebarToggleBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <span class="navbar-brand ms-2">Register New Fault</span>
+            </div>
+        </nav>
+
+        <div class="page-content">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-exclamation-triangle"></i> New Fault Registration
+                                </h5>
+                            </div>
+
+                            <div class="card-body p-4">
+                                <form id="faultRegistrationForm">
+                                    <!-- Zone Selection -->
+                                    <div class="mb-3">
+                                        <label for="zone" class="form-label">
+                                            <strong>Zone</strong> <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select" id="zone" name="zone" required>
+                                            <option value="">Select Zone</option>
+                                            <option value="Red Line">Red Line</option>
+                                            <option value="Blue Line">Blue Line</option>
+                                            <option value="Green Line">Green Line</option>
+                                            <option value="Yellow Line">Yellow Line</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select a zone.</div>
+                                    </div>
+
+                                    <!-- Station Selection -->
+                                    <div class="mb-3">
+                                        <label for="station" class="form-label">
+                                            <strong>Station</strong> <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select" id="station" name="station" required>
+                                            <option value="">Select Station</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select a station.</div>
+                                    </div>
+
+                                    <!-- System Selection -->
+                                    <div class="mb-3">
+                                        <label for="system" class="form-label">
+                                            <strong>System</strong> <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select" id="system" name="system" required>
+                                            <option value="">Select System</option>
+                                            <option value="AG">AG - Automatic Gate</option>
+                                            <option value="NCMC">NCMC - Contactless Card</option>
+                                            <option value="QR">QR - QR Code System</option>
+                                            <option value="TOM">TOM - Ticket On Mobile</option>
+                                            <option value="Parking">Parking - Parking System</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select a system.</div>
+                                    </div>
+
+                                    <!-- Equipment Selection -->
+                                    <div class="mb-3">
+                                        <label for="equipment" class="form-label">
+                                            <strong>Equipment</strong> <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select" id="equipment" name="equipment" required>
+                                            <option value="">Select Equipment</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select equipment.</div>
+                                    </div>
+
+                                    <!-- Equipment Location -->
+                                    <div class="mb-3">
+                                        <label for="location" class="form-label">
+                                            <strong>Equipment Location</strong> <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select" id="location" name="location" required>
+                                            <option value="">Select Location</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select installation location.</div>
+                                    </div>
+
+                                    <!-- Equipment Number -->
+                                    <div id="equipmentNumberField" class="mb-3" style="display: none;">
+                                        <label for="equipmentNumber" class="form-label">
+                                            <strong>Equipment Number</strong> <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="equipmentNumber" name="equipmentNumber" placeholder="E.g., 001, 002">
+                                        <div class="invalid-feedback">Please enter equipment number.</div>
+                                    </div>
+
+                                    <!-- Priority Selection -->
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            <strong>Priority</strong> <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="d-flex gap-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="priority" id="priorityHigh" value="High">
+                                                <label class="form-check-label" for="priorityHigh">
+                                                    High
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="priority" id="priorityMedium" value="Medium">
+                                                <label class="form-check-label" for="priorityMedium">
+                                                    Medium
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="priority" id="priorityLow" value="Low">
+                                                <label class="form-check-label" for="priorityLow">
+                                                    Low
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="priority" id="priorityNoCritical" value="No Critical">
+                                                <label class="form-check-label" for="priorityNoCritical">
+                                                    No Critical
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="invalid-feedback d-block">Please select a priority.</div>
+                                    </div>
+
+                                    <!-- Fault Description -->
+                                    <div class="mb-3">
+                                        <label for="faultDescription" class="form-label">
+                                            <strong>Fault Description</strong> <span class="text-danger">*</span>
+                                        </label>
+                                        <textarea class="form-control" id="faultDescription" name="faultDescription" rows="4" placeholder="Describe the fault in detail..." required></textarea>
+                                        <small class="text-muted d-block mt-1">
+                                            <i class="fas fa-lightbulb"></i> Suggestions based on history:
+                                        </small>
+                                        <div id="descriptionSuggestions" class="suggestions-list mt-2"></div>
+                                        <div class="invalid-feedback">Please provide a fault description.</div>
+                                    </div>
+
+                                    <!-- Form Actions -->
+                                    <div class="d-grid gap-2 d-sm-flex justify-content-end">
+                                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-check"></i> Register Fault
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Duplicate Fault Modal -->
+    <div class="modal fade" id="duplicateFaultModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-circle"></i> Duplicate Fault Detected
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <p><strong>A similar fault has been found:</strong></p>
+                    <div class="alert alert-light border">
+                        <div class="mb-2">
+                            <strong>Ticket ID:</strong> <span id="dupTicketId"></span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Status:</strong> <span id="dupStatus"></span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Fault Age:</strong> <span id="dupFaultAge"></span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Acknowledged By:</strong> <span id="dupAcknowledgedBy"></span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Current Handler:</strong> <span id="dupCurrentHandler"></span>
+                        </div>
+                    </div>
+                    <p class="text-muted"><small>Would you like to create a new fault anyway or open the existing one?</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="createNewFaultBtn" data-bs-dismiss="modal">
+                        Create New Fault
+                    </button>
+                    <button type="button" class="btn btn-primary" id="openExistingFaultBtn">
+                        Open Existing Fault
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div class="notification-container" id="toastContainer"></div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    
+    <script src="js/api.js"></script>
+    <script src="js/validators.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/cache.js"></script>
+    
+    <script src="js/register-fault.js"></script>
+</body>
+</html>
