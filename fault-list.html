@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fault List - CMRL AFC</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <i class="fas fa-metro"></i>
+                <span class="logo-text">CMRL AFC</span>
+            </div>
+            <button class="sidebar-toggle d-lg-none" id="sidebarToggle">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="register-fault.html" class="nav-link">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Register Fault</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fault-list.html" class="nav-link active">
+                        <i class="fas fa-list"></i>
+                        <span>Fault List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div>
+                    <div class="user-name" id="userName">User</div>
+                    <small id="userRole" class="text-muted">CMO</small>
+                </div>
+            </div>
+            <button class="btn btn-sm btn-outline-danger w-100 mt-2" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+            <div class="container-fluid">
+                <button class="btn btn-light sidebar-toggle d-lg-none" id="sidebarToggleBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <span class="navbar-brand ms-2">Fault Management List</span>
+                <div class="ms-auto">
+                    <a href="register-fault.html" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> New Fault
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="page-content">
+            <div class="container-fluid">
+                <!-- Filters Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select form-select-sm" id="filterStatus">
+                                    <option value="">All Status</option>
+                                    <option value="Open">Open</option>
+                                    <option value="Acknowledged">Acknowledged</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Pending">Pending</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Priority</label>
+                                <select class="form-select form-select-sm" id="filterPriority">
+                                    <option value="">All Priorities</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">System</label>
+                                <select class="form-select form-select-sm" id="filterSystem">
+                                    <option value="">All Systems</option>
+                                    <option value="AG">AG</option>
+                                    <option value="NCMC">NCMC</option>
+                                    <option value="QR">QR</option>
+                                    <option value="TOM">TOM</option>
+                                    <option value="Parking">Parking</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Search</label>
+                                <input type="text" class="form-control form-control-sm" id="searchBox" placeholder="Ticket ID, Station, Equipment...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Section -->
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ticket</th>
+                                    <th>Station</th>
+                                    <th>System</th>
+                                    <th>Equipment</th>
+                                    <th>
+                                        <span title="Total faults for this equipment">
+                                            <i class="fas fa-hashtag"></i> Counter
+                                        </span>
+                                    </th>
+                                    <th>
+                                        <span title="Repeat fault indicator">
+                                            <i class="fas fa-redo"></i> Repeat
+                                        </span>
+                                    </th>
+                                    <th>Assigned Team</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Age</th>
+                                    <th>Ack By</th>
+                                    <th>Closed By</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="faultTableBody">
+                                <tr>
+                                    <td colspan="13" class="text-center text-muted py-4">
+                                        <span class="spinner-border spinner-border-sm me-2"></span>
+                                        Loading faults...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav aria-label="Pagination" class="d-flex justify-content-between align-items-center p-3 border-top">
+                        <small class="text-muted">
+                            Showing <span id="pageInfo">0</span> faults
+                        </small>
+                        <ul class="pagination mb-0" id="paginationControls"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View/Edit Fault Modal -->
+    <div class="modal fade" id="faultModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Fault Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="faultModalBody">
+                    <!-- Content loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Equipment History Modal -->
+    <div class="modal fade" id="equipmentHistoryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-history"></i> Equipment History
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="equipmentHistoryBody">
+                    <!-- Content loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Close Fault Modal -->
+    <div class="modal fade" id="closeFaultModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-check-double"></i> Close Fault
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="closeFaultForm">
+                        <input type="hidden" id="closeFaultTicketId">
+
+                        <!-- Fault Code -->
+                        <div class="mb-3">
+                            <label for="closeFaultCode" class="form-label">
+                                <strong>Fault Code</strong> <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="closeFaultCode" name="faultCode" required>
+                                <option value="">Select Fault Code</option>
+                            </select>
+                            <div class="invalid-feedback">Please select a fault code.</div>
+                        </div>
+
+                        <!-- Fault Description (Auto/Other) -->
+                        <div class="mb-3">
+                            <label for="closeFaultDesc" class="form-label">
+                                <strong>Fault Description</strong> <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="closeFaultDesc" name="faultDesc" required>
+                                <option value="">Select from history</option>
+                            </select>
+                            <div id="otherDescField" style="display: none;" class="mt-2">
+                                <textarea class="form-control" id="otherFaultDesc" placeholder="Describe other fault..."></textarea>
+                            </div>
+                            <div class="invalid-feedback">Please select or enter fault description.</div>
+                        </div>
+
+                        <!-- Action Taken -->
+                        <div class="mb-3">
+                            <label for="closeFaultAction" class="form-label">
+                                <strong>Action Taken</strong> <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" id="closeFaultAction" name="actionTaken" rows="3" placeholder="What action was taken to resolve this fault?" required></textarea>
+                            <small class="text-muted d-block mt-1">Suggestions:</small>
+                            <div id="actionSuggestions" class="suggestions-list mt-2"></div>
+                            <div class="invalid-feedback">Please describe the action taken.</div>
+                        </div>
+
+                        <!-- Dependency -->
+                        <div class="mb-3">
+                            <label for="closeFaultDependency" class="form-label">
+                                <strong>Dependency (Optional)</strong>
+                            </label>
+                            <select class="form-select" id="closeFaultDependency" name="dependency">
+                                <option value="">Select Dependency</option>
+                                <option value="OEM">OEM</option>
+                                <option value="Backend L2">Backend L2</option>
+                                <option value="Paycraft">Paycraft</option>
+                                <option value="Software Team">Software Team</option>
+                                <option value="Spare">Spare</option>
+                            </select>
+                        </div>
+
+                        <!-- Spare Requirements -->
+                        <div id="spareRequiredField" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">Spare Required</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="spareRequired" id="spareYes" value="Yes">
+                                    <label class="form-check-label" for="spareYes">Yes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="spareRequired" id="spareNo" value="No">
+                                    <label class="form-check-label" for="spareNo">No</label>
+                                </div>
+                            </div>
+
+                            <div id="spareDetailsField" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="spareName" class="form-label">Spare Name</label>
+                                    <input type="text" class="form-control" id="spareName" placeholder="E.g., Card Reader, Gate Motor">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="spareQuantity" class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="spareQuantity" min="1" value="1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Closure Remarks -->
+                        <div class="mb-3">
+                            <label for="closureRemarks" class="form-label">Closure Remarks (Optional)</label>
+                            <textarea class="form-control" id="closureRemarks" rows="2" placeholder="Additional remarks..."></textarea>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-grid gap-2 d-sm-flex justify-content-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Close Fault
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div class="notification-container" id="toastContainer"></div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    
+    <script src="js/api.js"></script>
+    <script src="js/validators.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/cache.js"></script>
+    
+    <script src="js/fault-list.js"></script>
+</body>
+</html>
