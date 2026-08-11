@@ -5,25 +5,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Fault - CMRL AFC</title>
     
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
     
     <style>
-        html {
-            height: 100%;
-        }
+        html { height: 100%; }
+        body { height: 100%; display: flex; }
         
-        body {
-            height: 100%;
+        .info-section {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
             display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .form-row-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group-wrapper label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #212529;
+        }
+
+        .form-group-wrapper label .required {
+            color: #dc3545;
+        }
+
+        .form-group-wrapper select,
+        .form-group-wrapper textarea {
+            font-size: 14px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px 12px;
+        }
+
+        .form-group-wrapper select:focus,
+        .form-group-wrapper textarea:focus {
+            border-color: #0066cc;
+            box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+            outline: none;
+        }
+
+        .suggestions-section {
+            background-color: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 12px 15px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .suggestions-section label {
+            font-weight: 600;
+            color: #0066cc;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .suggestions-section .suggestion-item {
+            display: inline-block;
+            background-color: white;
+            border: 1px solid #0066cc;
+            color: #0066cc;
+            padding: 4px 8px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .suggestions-section .suggestion-item:hover {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .button-group button {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .button-group .btn-clear {
+            background-color: #f8f9fa;
+            color: #0066cc;
+            border: 1px solid #dee2e6;
+        }
+
+        .button-group .btn-clear:hover {
+            background-color: #e9ecef;
+        }
+
+        .button-group .btn-submit {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .button-group .btn-submit:hover {
+            background-color: #0052a3;
+        }
+
+        .badge-open {
+            background-color: #fde4e4;
+            color: #dc3545;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .info-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form-row-2col {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button-group button {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -91,25 +250,7 @@
                 <button class="btn btn-light sidebar-toggle d-lg-none" id="sidebarToggleBtn">
                     <i class="fas fa-bars"></i>
                 </button>
-                <span class="navbar-brand ms-2">Register New Fault</span>
-                
-                <div class="ms-auto d-flex align-items-center gap-2">
-                    <button class="btn btn-light position-relative" id="notificationBtn">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge" id="notificationCount">0</span>
-                    </button>
-                    <div class="dropdown">
-                        <button class="btn btn-light dropdown-toggle" type="button" id="userMenuBtn" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#settings">Settings</a></li>
-                            <li><a class="dropdown-item" href="#profile">Profile</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#logout">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
+                <span class="navbar-brand ms-2">Register Fault</span>
             </div>
         </nav>
 
@@ -119,253 +260,125 @@
                 <!-- Header -->
                 <div class="page-header mb-4">
                     <h1>Register Fault</h1>
-                    <p class="text-muted">Report a new AFC system fault for maintenance</p>
+                    <p class="text-muted">Create a new AFC fault ticket</p>
                 </div>
 
-                <!-- Fault Registration Form -->
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-exclamation-triangle"></i> Fault Information
-                                </h6>
+                <!-- Main Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Form Title -->
+                        <h5 class="mb-2">Register New Fault</h5>
+                        <p class="text-muted mb-4" style="font-size: 13px;">Ticket ID, date, time, reported by and status are automatic</p>
+
+                        <!-- Info Section -->
+                        <div class="info-section">
+                            <div class="info-row">
+                                <div class="info-item">
+                                    <span class="info-label">Ticket ID</span>
+                                    <span class="info-value" id="ticketId">AFC-SSI-AUTO</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Date & Time</span>
+                                    <span class="info-value" id="dateTime">11 Aug 2026, 9:54 am</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Reported By</span>
+                                    <span class="info-value" id="reportedBy">CMO User</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Status</span>
+                                    <span class="badge-open">Open</span>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <form id="faultRegistrationForm">
-                                    <!-- Zone Selection -->
-                                    <div class="mb-3">
-                                        <label for="zone" class="form-label">Zone <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="zone" required>
-                                            <option value="">Select Zone</option>
-                                        </select>
-                                        <small class="text-muted d-block mt-1">CMRL is divided into 3 zones</small>
-                                    </div>
-
-                                    <!-- Station Selection -->
-                                    <div class="mb-3">
-                                        <label for="station" class="form-label">Station <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="station" required disabled>
-                                            <option value="">Select Zone First</option>
-                                        </select>
-                                        <small class="text-muted d-block mt-1">
-                                            <i class="fas fa-info-circle"></i> Select a zone to see available stations
-                                        </small>
-                                    </div>
-
-                                    <!-- System Selection -->
-                                    <div class="mb-3">
-                                        <label for="system" class="form-label">System <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="system" required>
-                                            <option value="">Select System</option>
-                                        </select>
-                                        <small class="text-muted d-block mt-1">AFC system that is faulty</small>
-                                    </div>
-
-                                    <!-- Equipment Selection -->
-                                    <div class="mb-3">
-                                        <label for="equipment" class="form-label">Equipment <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="equipment" required disabled>
-                                            <option value="">Select System First</option>
-                                        </select>
-                                        <small class="text-muted d-block mt-1">Equipment that is faulty</small>
-                                    </div>
-
-                                    <!-- Equipment Number (Conditional) -->
-                                    <div class="mb-3" id="equipmentNumberField" style="display: none;">
-                                        <label for="equipmentNumber" class="form-label">Equipment Number</label>
-                                        <input type="text" class="form-control" id="equipmentNumber" 
-                                               placeholder="e.g., AG-001, GATE-05">
-                                        <small class="text-muted d-block mt-1">Serial or identification number of equipment (if applicable)</small>
-                                    </div>
-
-                                    <!-- Location Selection -->
-                                    <div class="mb-3">
-                                        <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="location" required disabled>
-                                            <option value="">Select Station First</option>
-                                        </select>
-                                        <small class="text-muted d-block mt-1">Specific location within station</small>
-                                    </div>
-
-                                    <!-- Priority Selection -->
-                                    <div class="mb-3">
-                                        <label class="form-label">Priority <span class="text-danger">*</span></label>
-                                        <div class="row g-2">
-                                            <div class="col-auto">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="priority" 
-                                                           id="priorityHigh" value="High" required>
-                                                    <label class="form-check-label" for="priorityHigh">
-                                                        <span class="badge bg-danger">HIGH</span> Critical (0-2 hours)
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="priority" 
-                                                           id="priorityMedium" value="Medium">
-                                                    <label class="form-check-label" for="priorityMedium">
-                                                        <span class="badge bg-warning">MEDIUM</span> Important (0-6 hours)
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="priority" 
-                                                           id="priorityLow" value="Low">
-                                                    <label class="form-check-label" for="priorityLow">
-                                                        <span class="badge bg-info">LOW</span> Standard (0-24 hours)
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="priority" 
-                                                           id="priorityNoCritical" value="NoCritical">
-                                                    <label class="form-check-label" for="priorityNoCritical">
-                                                        <span class="badge bg-secondary">INFO</span> Non-Critical (0-48 hours)
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <small class="text-muted d-block mt-2">
-                                            <i class="fas fa-clock"></i> SLA times shown based on priority
-                                        </small>
-                                    </div>
-
-                                    <!-- Fault Description -->
-                                    <div class="mb-3">
-                                        <label for="faultDescription" class="form-label">Fault Description <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" id="faultDescription" rows="4" 
-                                                  placeholder="Describe the fault in detail. What is happening? When did it start? Has this happened before?" 
-                                                  required></textarea>
-                                        <small class="text-muted d-block mt-2">
-                                            <strong>Suggestions:</strong>
-                                            <div class="suggestions-list mt-2" id="descriptionSuggestions">
-                                                <!-- Suggestions will be populated here -->
-                                            </div>
-                                        </small>
-                                    </div>
-
-                                    <!-- Form Actions -->
-                                    <div class="d-grid gap-2 d-sm-flex">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-paper-plane"></i> Submit Fault Report
-                                        </button>
-                                        <button type="reset" class="btn btn-light">
-                                            <i class="fas fa-redo"></i> Clear Form
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sidebar Info -->
-                    <div class="col-lg-4">
-                        <!-- Quick Info Card -->
-                        <div class="card mb-3">
-                            <div class="card-header bg-info text-white">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-lightbulb"></i> Helpful Tips
-                                </h6>
-                            </div>
-                            <div class="card-body">
-                                <p><strong>Before Reporting:</strong></p>
-                                <ul class="ps-3 mb-0">
-                                    <li>Note the exact time of fault occurrence</li>
-                                    <li>Check if issue is intermittent or permanent</li>
-                                    <li>Capture error codes or messages if visible</li>
-                                    <li>Note any pattern or when it started</li>
-                                </ul>
+                            <div class="info-item">
+                                <span class="info-label">Assigned Team</span>
+                                <span class="info-value" id="assignedTeam">AFC L1 Team</span>
                             </div>
                         </div>
 
-                        <!-- Priority Guide -->
-                        <div class="card mb-3">
-                            <div class="card-header">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-flag"></i> Priority Guide
-                                </h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-2">
-                                    <span class="badge bg-danger">HIGH</span>
-                                    <small>System completely down, service affected</small>
+                        <!-- Form -->
+                        <form id="faultRegistrationForm">
+                            <!-- Zone & Station Row -->
+                            <div class="form-row-2col">
+                                <div class="form-group-wrapper">
+                                    <label>Zone <span class="required">*</span></label>
+                                    <select id="zone" required>
+                                        <option value="">Select Zone</option>
+                                    </select>
                                 </div>
-                                <div class="mb-2">
-                                    <span class="badge bg-warning">MEDIUM</span>
-                                    <small>Partial malfunction, reduced efficiency</small>
-                                </div>
-                                <div class="mb-2">
-                                    <span class="badge bg-info">LOW</span>
-                                    <small>Minor issue, workaround available</small>
-                                </div>
-                                <div>
-                                    <span class="badge bg-secondary">INFO</span>
-                                    <small>Informational, cosmetic, no SLA</small>
+                                <div class="form-group-wrapper">
+                                    <label>Station <span class="required">*</span></label>
+                                    <select id="station" required disabled>
+                                        <option value="">Select Zone First</option>
+                                    </select>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Duplicate Check Info -->
-                        <div class="card">
-                            <div class="card-header bg-warning">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-search-duplicate"></i> Duplicate Check
-                                </h6>
+                            <!-- System & Equipment Row -->
+                            <div class="form-row-2col">
+                                <div class="form-group-wrapper">
+                                    <label>System <span class="required">*</span></label>
+                                    <select id="system" required>
+                                        <option value="">Select System</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-wrapper">
+                                    <label>Equipment <span class="required">*</span></label>
+                                    <select id="equipment" required disabled>
+                                        <option value="">Select System First</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <p class="small">
-                                    The system automatically checks for similar faults at the same location. 
-                                    If a duplicate is found, you'll be notified before submission.
-                                </p>
+
+                            <!-- Equipment Number & Priority Row -->
+                            <div class="form-row-2col">
+                                <div class="form-group-wrapper">
+                                    <label id="equipmentNumberLabel">AG Number <span class="required">*</span></label>
+                                    <input type="text" id="equipmentNumber" placeholder="Example: AG-15" required>
+                                </div>
+                                <div class="form-group-wrapper">
+                                    <label>Priority <span class="required">*</span></label>
+                                    <select id="priority" required>
+                                        <option value="">Select Priority</option>
+                                        <option value="High">High (0-2 hrs)</option>
+                                        <option value="Medium">Medium (0-6 hrs)</option>
+                                        <option value="Low">Low (0-24 hrs)</option>
+                                        <option value="NoCritical">Non-Critical (0-48 hrs)</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+
+                            <!-- Fault Description -->
+                            <div class="form-group-wrapper" style="margin-bottom: 0;">
+                                <label>Fault Description <span class="required">*</span></label>
+                                <textarea id="faultDescription" rows="6" placeholder="Describe the observed fault clearly" required></textarea>
+                            </div>
+
+                            <!-- Suggestions Section -->
+                            <div class="suggestions-section">
+                                <label>Suggestions from history</label>
+                                <div id="descriptionSuggestions">
+                                    <span style="color: #6c757d;">Unable to load suggestions.</span>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="button-group">
+                                <button type="reset" class="btn-clear">
+                                    <i class="fas fa-redo"></i> Clear
+                                </button>
+                                <button type="submit" class="btn-submit">
+                                    <i class="fas fa-paper-plane"></i> Submit Fault
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Duplicate Fault Modal -->
-    <div class="modal fade" id="duplicateFaultModal" tabindex="-1" backdrop="static" keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-warning text-dark">
-                    <h5 class="modal-title">
-                        <i class="fas fa-exclamation-triangle"></i> Duplicate Fault Detected
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>A similar fault has been reported recently at this location:</p>
-                    <div class="alert alert-info mb-3">
-                        <strong>Ticket ID:</strong> <span id="dupTicketId">-</span><br>
-                        <strong>Status:</strong> <span id="dupStatus">-</span><br>
-                        <strong>Reported:</strong> <span id="dupDate">-</span>
-                    </div>
-                    <p class="small text-muted">
-                        Do you want to continue with a new fault report or view the existing fault?
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        View Existing
-                    </button>
-                    <button type="button" class="btn btn-warning" id="continueDuplicateBtn">
-                        Continue New Report
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Toast Container -->
-    <div class="notification-container" id="toastContainer"></div>
-
-    <!-- Loading Spinner -->
+    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
@@ -376,228 +389,40 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     
-    <script src="js/api.js"></script>
-    <script src="js/validators.js"></script>
+    <script src="js/cache.js"></script>
     <script src="js/notifications.js"></script>
     <script src="js/ui.js"></script>
-    <script src="js/cache.js"></script>
     <script src="js/master-data.js"></script>
-    
+    <script src="js/validators.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/register-fault.js"></script>
+
     <script>
-        // ===== REGISTER FAULT PAGE LOGIC =====
-
-        // Form elements
-        const form = document.getElementById('faultRegistrationForm');
-        const zoneSelect = document.getElementById('zone');
-        const stationSelect = document.getElementById('station');
-        const systemSelect = document.getElementById('system');
-        const equipmentSelect = document.getElementById('equipment');
-        const equipmentNumberField = document.getElementById('equipmentNumberField');
-        const equipmentNumberInput = document.getElementById('equipmentNumber');
-        const locationSelect = document.getElementById('location');
-        const faultDescriptionInput = document.getElementById('faultDescription');
-        const descriptionSuggestions = document.getElementById('descriptionSuggestions');
-        const duplicateFaultModal = new bootstrap.Modal(document.getElementById('duplicateFaultModal'));
-
-        // Initialize form on page load
-        function initializeForm() {
-            // Populate dropdowns
-            populateZoneDropdown('zone');
-            populateSystemDropdown('system');
-
-            // Setup cascading dropdowns
-            populateStationDropdown('zone', 'station');
-            populateEquipmentDropdown('system', 'equipment');
-            populateLocationDropdown('station', 'location');
-
-            // Setup listeners
-            setupFormListeners();
-        }
-
-        // Setup form event listeners
-        function setupFormListeners() {
-            // Show equipment number field for certain systems
-            equipmentSelect.addEventListener('change', function() {
-                const equipmentId = parseInt(this.value);
-                const equipment = EQUIPMENT.find(e => e.id === equipmentId);
-                
-                if (equipment && (equipment.system === 'AG' || equipment.system === 'TOM' || equipment.system === 'Parking')) {
-                    equipmentNumberField.style.display = 'block';
-                    equipmentNumberInput.required = true;
-                } else {
-                    equipmentNumberField.style.display = 'none';
-                    equipmentNumberInput.required = false;
-                    equipmentNumberInput.value = '';
-                }
-            });
-
-            // Generate description suggestions based on system
-            systemSelect.addEventListener('change', function() {
-                updateDescriptionSuggestions();
-            });
-
-            // Update suggestions as user types
-            faultDescriptionInput.addEventListener('input', function() {
-                updateDescriptionSuggestions();
-            });
-
-            // Handle form submission
-            form.addEventListener('submit', handleFormSubmit);
-        }
-
-        // Update description suggestions
-        function updateDescriptionSuggestions() {
-            const system = systemSelect.value;
-            const description = faultDescriptionInput.value;
-
-            if (!system) {
-                descriptionSuggestions.innerHTML = '';
-                return;
-            }
-
-            const suggestions = getFaultCodeSuggestions(system, description);
+        // Update info section on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = moment();
+            document.getElementById('dateTime').textContent = now.format('DD MMM YYYY, h:mm a');
             
-            descriptionSuggestions.innerHTML = '';
-            suggestions.forEach(suggestion => {
-                const suggestionTag = document.createElement('span');
-                suggestionTag.className = 'suggestion-item';
-                suggestionTag.textContent = suggestion.description;
-                suggestionTag.style.cursor = 'pointer';
-                suggestionTag.addEventListener('click', function() {
-                    faultDescriptionInput.value = suggestion.description;
-                    faultDescriptionInput.focus();
-                });
-                descriptionSuggestions.appendChild(suggestionTag);
-            });
-        }
+            // Generate random ticket ID
+            const ticketId = `AFC-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 100000)).padStart(5, '0')}`;
+            document.getElementById('ticketId').textContent = ticketId;
+        });
 
-        // Handle form submission
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-
-            // Validate form
-            if (!form.checkValidity()) {
-                form.classList.add('was-validated');
-                return;
-            }
-
-            // Collect form data
-            const formData = {
-                zone: zoneSelect.value,
-                station: stationSelect.value,
-                system: systemSelect.value,
-                equipment: equipmentSelect.value,
-                equipmentNumber: equipmentNumberInput.value || 'N/A',
-                location: locationSelect.value,
-                priority: document.querySelector('input[name="priority"]:checked').value,
-                description: faultDescriptionInput.value,
-                createdAt: moment().format('YYYY-MM-DD HH:mm:ss')
+        // Update equipment number label based on system selection
+        document.getElementById('system').addEventListener('change', function() {
+            const system = this.value;
+            const label = document.getElementById('equipmentNumberLabel');
+            const systemNames = {
+                'AG': 'AG Number',
+                'NCMC': 'Card Reader #',
+                'QR': 'QR Scanner #',
+                'TOM': 'Token Machine #',
+                'Parking': 'Barrier #'
             };
-
-            // Show loading
-            document.getElementById('loadingOverlay').classList.add('show');
-
-            try {
-                // Check for duplicate faults
-                const duplicateFault = await checkDuplicateFault(formData);
-                
-                if (duplicateFault) {
-                    document.getElementById('loadingOverlay').classList.remove('show');
-                    showDuplicateFaultModal(duplicateFault);
-                    return;
-                }
-
-                // Submit fault
-                const response = await fetch('/api/faults/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
-
-                if (!response.ok) throw new Error('Submission failed');
-
-                const result = await response.json();
-
-                // Success notification
-                showToast('success', `Fault Registered Successfully!`, `Ticket ID: ${result.ticketId}`);
-
-                // Reset form
-                form.reset();
-                form.classList.remove('was-validated');
-                equipmentNumberField.style.display = 'none';
-                descriptionSuggestions.innerHTML = '';
-
-                // Redirect to fault list after 2 seconds
-                setTimeout(() => {
-                    window.location.href = 'fault-list.html';
-                }, 2000);
-
-            } catch (error) {
-                showToast('error', 'Submission Failed', error.message);
-            } finally {
-                document.getElementById('loadingOverlay').classList.remove('show');
+            if (system) {
+                label.innerHTML = `${systemNames[system] || 'Equipment #'} <span class="required">*</span>`;
             }
-        }
-
-        // Check for duplicate faults
-        async function checkDuplicateFault(formData) {
-            try {
-                const response = await fetch('/api/faults/check-duplicate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        station: formData.station,
-                        system: formData.system,
-                        equipment: formData.equipment,
-                        location: formData.location
-                    })
-                });
-
-                if (!response.ok) return null;
-                return await response.json();
-            } catch (error) {
-                console.error('Duplicate check failed:', error);
-                return null;
-            }
-        }
-
-        // Show duplicate fault modal
-        function showDuplicateFaultModal(duplicateFault) {
-            document.getElementById('dupTicketId').textContent = duplicateFault.ticketId || 'TKT-XXXX-XXXXX';
-            document.getElementById('dupStatus').textContent = duplicateFault.status || 'Open';
-            document.getElementById('dupDate').textContent = moment(duplicateFault.createdAt).format('DD MMM YYYY, HH:mm');
-
-            const continueBtn = document.getElementById('continueDuplicateBtn');
-            continueBtn.onclick = () => {
-                duplicateFaultModal.hide();
-                // User can continue with the form
-            };
-
-            duplicateFaultModal.show();
-        }
-
-        // Show toast notification
-        function showToast(type, title, message) {
-            const toastContainer = document.getElementById('toastContainer');
-            const toastHtml = `
-                <div class="toast" role="alert">
-                    <div class="toast-header bg-${type === 'success' ? 'success' : 'danger'} text-white">
-                        <strong class="me-auto">${title}</strong>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-                    </div>
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                </div>
-            `;
-            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-            
-            const toast = new bootstrap.Toast(toastContainer.querySelector('.toast:last-child'));
-            toast.show();
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', initializeForm);
+        });
     </script>
 </body>
 </html>
