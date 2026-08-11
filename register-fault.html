@@ -109,6 +109,35 @@
             background-color: #0052a3;
         }
 
+        .btn-submit:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+
         @media (max-width: 768px) {
             .info-row {
                 grid-template-columns: 1fr 1fr;
@@ -207,7 +236,7 @@
                                 </div>
                                 <div class="info-item">
                                     <span class="info-label">Date & Time</span>
-                                    <span class="info-value" id="dateTime">11 Aug 2026, 9:54 am</span>
+                                    <span class="info-value" id="dateTime">Loading...</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="info-label">Reported By</span>
@@ -220,7 +249,7 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Assigned Team</span>
-                                <span class="info-value">AFC L1 Team</span>
+                                <span class="info-value" id="assignedTeam">AFC L1 Team</span>
                             </div>
                         </div>
 
@@ -232,9 +261,6 @@
                                     <label class="form-label"><strong>Zone</strong> <span style="color: red;">*</span></label>
                                     <select id="zone" class="form-select" required>
                                         <option value="">Select Zone</option>
-                                        <option value="Zone 1">Zone 1</option>
-                                        <option value="Zone 2">Zone 2</option>
-                                        <option value="Zone 3">Zone 3</option>
                                     </select>
                                 </div>
                                 <div>
@@ -302,7 +328,7 @@
                                 <button type="reset" class="btn-clear">
                                     <i class="fas fa-redo"></i> Clear
                                 </button>
-                                <button type="submit" class="btn-submit">
+                                <button type="submit" class="btn-submit" id="submitBtn">
                                     <i class="fas fa-paper-plane"></i> Submit Fault
                                 </button>
                             </div>
@@ -313,11 +339,24 @@
         </div>
     </div>
 
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     
     <script>
+        // Configuration
+        const API_URL = 'https://script.google.com/macros/d/YOUR_APPS_SCRIPT_DEPLOYMENT_ID/usercallback';
+
         // Station data
         const STATIONS = {
             'Zone 1': [
@@ -369,54 +408,14 @@
             ]
         };
 
-        // Equipment data mapped from the table
+        // Equipment data
         const EQUIPMENT = {
-            'NCMC': [
-                'Touch Display',
-                'Printer',
-                'EDC Device',
-                'POS Device',
-                'POS Device and Base',
-                'Ticket Reader',
-                'Cash Counter',
-                'Barcode Scanner',
-                'Passenger Display Unit',
-                'Charger adapter',
-                'Counter Communication Set',
-                'Adapter',
-                'Charger',
-                'Other'
-            ],
-            'PQR': [
-                'Touch Display',
-                'QR Printer',
-                'QR Scanner',
-                'Cash Counter',
-                'Charger',
-                'Other'
-            ],
-            'AG': [
-                'Gear',
-                'Flap',
-                'FEIG Reader',
-                'QR Scanner',
-                'Raspberry pi',
-                'End display',
-                'PIDM',
-                'Display PCB',
-                'R/W antenna',
-                'Motor',
-                'Other'
-            ],
-            'Parking': [
-                'Evolute Device',
-                'Tamco Device',
-                'Printer',
-                'Other'
-            ]
+            'NCMC': ['Touch Display', 'Printer', 'EDC Device', 'POS Device', 'POS Device and Base', 'Ticket Reader', 'Cash Counter', 'Barcode Scanner', 'Passenger Display Unit', 'Charger adapter', 'Counter Communication Set', 'Adapter', 'Charger', 'Other'],
+            'PQR': ['Touch Display', 'QR Printer', 'QR Scanner', 'Cash Counter', 'Charger', 'Other'],
+            'AG': ['Gear', 'Flap', 'FEIG Reader', 'QR Scanner', 'Raspberry pi', 'End display', 'PIDM', 'Display PCB', 'R/W antenna', 'Motor', 'Other'],
+            'Parking': ['Evolute Device', 'Tamco Device', 'Printer', 'Other']
         };
 
-        // Equipment number labels by system
         const EQUIPMENT_LABELS = {
             'NCMC': 'EFO/TOM Number',
             'PQR': 'EFO/TOM Number',
@@ -424,11 +423,58 @@
             'Parking': 'Parking Slot'
         };
 
-        // Initialize on load
+        // API Helper
+        async function apiCall(action, data = null) {
+            try {
+                const payload = {
+                    action,
+                    data
+                };
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // Toast notification
+        function showToast(type, message, duration = 5000) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+            toast.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.getElementById('toastContainer').appendChild(toast);
+            
+            setTimeout(() => toast.remove(), duration);
+        }
+
+        // Loading
+        function showLoading(show = true) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.add('show');
+                document.getElementById('submitBtn').disabled = true;
+            } else {
+                overlay.classList.remove('show');
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateDateTime();
             generateTicketId();
             setupEventListeners();
+            populateZones();
         });
 
         function updateDateTime() {
@@ -441,6 +487,16 @@
             document.getElementById('ticketId').textContent = `AFC-SSI-${random}`;
         }
 
+        function populateZones() {
+            const zoneSelect = document.getElementById('zone');
+            Object.keys(STATIONS).forEach(zone => {
+                const opt = document.createElement('option');
+                opt.value = zone;
+                opt.textContent = zone;
+                zoneSelect.appendChild(opt);
+            });
+        }
+
         function setupEventListeners() {
             const zoneSelect = document.getElementById('zone');
             const stationSelect = document.getElementById('station');
@@ -448,6 +504,7 @@
             const equipmentSelect = document.getElementById('equipment');
             const equipLabel = document.getElementById('equipLabel');
             const equipNumber = document.getElementById('equipNumber');
+            const form = document.getElementById('faultForm');
 
             // Zone change
             zoneSelect.addEventListener('change', function() {
@@ -469,7 +526,6 @@
             systemSelect.addEventListener('change', function() {
                 equipmentSelect.innerHTML = '<option value="">Select Equipment</option>';
                 if (this.value) {
-                    // Populate equipment dropdown
                     EQUIPMENT[this.value].forEach(eq => {
                         const opt = document.createElement('option');
                         opt.value = eq;
@@ -477,34 +533,91 @@
                         equipmentSelect.appendChild(opt);
                     });
                     equipmentSelect.disabled = false;
-                    
-                    // Update equipment label
-                    const label = EQUIPMENT_LABELS[this.value];
-                    equipLabel.textContent = label;
+                    equipLabel.textContent = EQUIPMENT_LABELS[this.value];
                     equipNumber.placeholder = `Example: ${this.value}-15`;
+                    loadSuggestions(this.value);
                 } else {
                     equipmentSelect.disabled = true;
-                    equipLabel.textContent = 'Equipment Number';
                 }
             });
 
             // Form submit
-            document.getElementById('faultForm').addEventListener('submit', function(e) {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                await submitFault();
+            });
+        }
+
+        async function loadSuggestions(system) {
+            try {
+                const result = await apiCall('historySuggestions', { system });
+                if (result.ok && result.descriptionSuggestions) {
+                    const suggestionsDiv = document.getElementById('suggestions');
+                    suggestionsDiv.innerHTML = result.descriptionSuggestions
+                        .map(s => `<span class="badge bg-info me-2 mb-2" style="cursor:pointer;" onclick="setSuggestion('${s.replace(/'/g, "\\'")}', 'description')">${s}</span>`)
+                        .join('');
+                }
+            } catch (error) {
+                console.error('Error loading suggestions:', error);
+            }
+        }
+
+        function setSuggestion(value, fieldId) {
+            document.getElementById(fieldId).value = value;
+        }
+
+        async function submitFault() {
+            try {
+                showLoading(true);
+
+                const stationCode = document.getElementById('station').value;
+                const stationName = document.getElementById('station').selectedOptions[0]?.text || '';
+                
                 const formData = {
-                    ticketId: document.getElementById('ticketId').textContent,
                     zone: document.getElementById('zone').value,
-                    station: document.getElementById('station').value,
+                    stationCode: stationCode,
+                    stationName: stationName.split(' - ')[1] || stationName,
                     system: document.getElementById('system').value,
                     equipment: document.getElementById('equipment').value,
-                    equipmentNumber: document.getElementById('equipNumber').value,
-                    priority: document.getElementById('priority').value,
-                    description: document.getElementById('description').value
+                    agNumber: document.getElementById('system').value === 'AG' ? document.getElementById('equipNumber').value : '',
+                    parkingSlot: document.getElementById('system').value === 'Parking' ? document.getElementById('equipNumber').value : '',
+                    installedAt: document.getElementById('system').value === 'NCMC' || document.getElementById('system').value === 'PQR' ? document.getElementById('equipNumber').value : '',
+                    priority: document.getElementById('priority').value || 'Medium',
+                    description: document.getElementById('description').value,
+                    reportedBy: 'CMO User'
                 };
-                console.log('Fault Registered:', formData);
-                alert('Fault registered!\nTicket: ' + formData.ticketId);
-                this.reset();
-            });
+
+                // Check duplicate first
+                console.log('Checking duplicate...', formData);
+                const dupResult = await apiCall('checkDuplicate', formData);
+                
+                if (dupResult.ok && dupResult.duplicate) {
+                    showLoading(false);
+                    showToast('warning', `Duplicate fault found: ${dupResult.existingFault['Ticket ID']} (${dupResult.existingFault.Status})`);
+                    return;
+                }
+
+                // Create fault
+                console.log('Creating fault...', formData);
+                const result = await apiCall('createFault', formData);
+
+                if (result.ok) {
+                    showToast('success', `Fault registered: ${result.ticketId}`);
+                    document.getElementById('faultForm').reset();
+                    document.getElementById('ticketId').textContent = `AFC-SSI-AUTO`;
+                    
+                    setTimeout(() => {
+                        window.location.href = 'fault-list.html';
+                    }, 2000);
+                } else {
+                    showToast('error', result.error || 'Failed to register fault');
+                }
+            } catch (error) {
+                console.error('Submit error:', error);
+                showToast('error', 'Error: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
         }
     </script>
 </body>
