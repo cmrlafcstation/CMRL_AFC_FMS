@@ -74,24 +74,6 @@
             font-size: 13px;
         }
 
-        .suggestion-item {
-            display: inline-block;
-            background-color: white;
-            border: 1px solid #0066cc;
-            color: #0066cc;
-            padding: 4px 8px;
-            margin-right: 5px;
-            margin-bottom: 5px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .suggestion-item:hover {
-            background-color: #0066cc;
-            color: white;
-        }
-
         .button-group {
             display: flex;
             gap: 10px;
@@ -269,10 +251,9 @@
                                     <label class="form-label"><strong>System</strong> <span style="color: red;">*</span></label>
                                     <select id="system" class="form-select" required>
                                         <option value="">Select System</option>
-                                        <option value="AG">AG (Automatic Gate)</option>
-                                        <option value="NCMC">NCMC (Non-Contact Card)</option>
-                                        <option value="QR">QR (QR Code)</option>
-                                        <option value="TOM">TOM (Token-Based)</option>
+                                        <option value="NCMC">NCMC</option>
+                                        <option value="PQR">PQR (QR)</option>
+                                        <option value="AG">AG</option>
                                         <option value="Parking">Parking</option>
                                     </select>
                                 </div>
@@ -288,12 +269,12 @@
                             <div class="form-row-2col">
                                 <div>
                                     <label class="form-label"><strong id="equipLabel">Equipment Number</strong> <span style="color: red;">*</span></label>
-                                    <input type="text" id="equipNumber" class="form-control" placeholder="Example: AG-15" required>
+                                    <input type="text" id="equipNumber" class="form-control" placeholder="Example: EFO-15" required>
                                 </div>
                                 <div>
-                                    <label class="form-label"><strong>Priority</strong> <span style="color: red;">*</span></label>
-                                    <select id="priority" class="form-select" required>
-                                        <option value="">Select Priority</option>
+                                    <label class="form-label"><strong>Priority</strong></label>
+                                    <select id="priority" class="form-select">
+                                        <option value="">Select Priority (Optional)</option>
                                         <option value="High">High (0-2 hrs)</option>
                                         <option value="Medium">Medium (0-6 hrs)</option>
                                         <option value="Low">Low (0-24 hrs)</option>
@@ -388,13 +369,59 @@
             ]
         };
 
-        // Equipment data
+        // Equipment data mapped from the table
         const EQUIPMENT = {
-            'AG': ['Card Reader', 'Gate Motor', 'Door Sensor', 'Control Panel', 'LED Display'],
-            'NCMC': ['Card Reader', 'Validator', 'Server', 'Card Stock'],
-            'QR': ['QR Scanner', 'QR Printer', 'Display'],
-            'TOM': ['Token Dispenser', 'Token Collector', 'Counting Machine'],
-            'Parking': ['Barrier Motor', 'ANPR Camera', 'Display']
+            'NCMC': [
+                'Touch Display',
+                'Printer',
+                'EDC Device',
+                'POS Device',
+                'POS Device and Base',
+                'Ticket Reader',
+                'Cash Counter',
+                'Barcode Scanner',
+                'Passenger Display Unit',
+                'Charger adapter',
+                'Counter Communication Set',
+                'Adapter',
+                'Charger',
+                'Other'
+            ],
+            'PQR': [
+                'Touch Display',
+                'QR Printer',
+                'QR Scanner',
+                'Cash Counter',
+                'Charger',
+                'Other'
+            ],
+            'AG': [
+                'Gear',
+                'Flap',
+                'FEIG Reader',
+                'QR Scanner',
+                'Raspberry pi',
+                'End display',
+                'PIDM',
+                'Display PCB',
+                'R/W antenna',
+                'Motor',
+                'Other'
+            ],
+            'Parking': [
+                'Evolute Device',
+                'Tamco Device',
+                'Printer',
+                'Other'
+            ]
+        };
+
+        // Equipment number labels by system
+        const EQUIPMENT_LABELS = {
+            'NCMC': 'EFO/TOM Number',
+            'PQR': 'EFO/TOM Number',
+            'AG': 'AG Number',
+            'Parking': 'Parking Slot'
         };
 
         // Initialize on load
@@ -419,6 +446,8 @@
             const stationSelect = document.getElementById('station');
             const systemSelect = document.getElementById('system');
             const equipmentSelect = document.getElementById('equipment');
+            const equipLabel = document.getElementById('equipLabel');
+            const equipNumber = document.getElementById('equipNumber');
 
             // Zone change
             zoneSelect.addEventListener('change', function() {
@@ -440,6 +469,7 @@
             systemSelect.addEventListener('change', function() {
                 equipmentSelect.innerHTML = '<option value="">Select Equipment</option>';
                 if (this.value) {
+                    // Populate equipment dropdown
                     EQUIPMENT[this.value].forEach(eq => {
                         const opt = document.createElement('option');
                         opt.value = eq;
@@ -447,16 +477,32 @@
                         equipmentSelect.appendChild(opt);
                     });
                     equipmentSelect.disabled = false;
-                    document.getElementById('equipLabel').textContent = this.value + ' Number';
+                    
+                    // Update equipment label
+                    const label = EQUIPMENT_LABELS[this.value];
+                    equipLabel.textContent = label;
+                    equipNumber.placeholder = `Example: ${this.value}-15`;
                 } else {
                     equipmentSelect.disabled = true;
+                    equipLabel.textContent = 'Equipment Number';
                 }
             });
 
             // Form submit
             document.getElementById('faultForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                alert('Fault registered!\nTicket: ' + document.getElementById('ticketId').textContent);
+                const formData = {
+                    ticketId: document.getElementById('ticketId').textContent,
+                    zone: document.getElementById('zone').value,
+                    station: document.getElementById('station').value,
+                    system: document.getElementById('system').value,
+                    equipment: document.getElementById('equipment').value,
+                    equipmentNumber: document.getElementById('equipNumber').value,
+                    priority: document.getElementById('priority').value,
+                    description: document.getElementById('description').value
+                };
+                console.log('Fault Registered:', formData);
+                alert('Fault registered!\nTicket: ' + formData.ticketId);
                 this.reset();
             });
         }
