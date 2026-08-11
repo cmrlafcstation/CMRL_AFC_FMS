@@ -354,8 +354,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     
     <script>
-        // Configuration
-        const API_URL = 'https://script.google.com/macros/d/1hCvN5N_Jn-MadzrVFvE6doegN5OwEV5_HoEvIpT4W4w/usercallback';
+        // ✅ CONFIGURED WITH YOUR DEPLOYMENT ID
+        const API_URL = 'https://script.google.com/macros/d/AKfycbzo28mkU9_YWzFawK7PcvpRrt7curzIOoEPhHfxYwRH5qmapBvUe3xN9zhmW3-5B93wbw/usercallback';
 
         // Station data
         const STATIONS = {
@@ -422,27 +422,6 @@
             'AG': 'AG Number',
             'Parking': 'Parking Slot'
         };
-
-        // API Helper
-        async function apiCall(action, data = null) {
-            try {
-                const payload = {
-                    action,
-                    data
-                };
-
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-                return result;
-            } catch (error) {
-                console.error('API Error:', error);
-                throw error;
-            }
-        }
 
         // Toast notification
         function showToast(type, message, duration = 5000) {
@@ -535,7 +514,6 @@
                     equipmentSelect.disabled = false;
                     equipLabel.textContent = EQUIPMENT_LABELS[this.value];
                     equipNumber.placeholder = `Example: ${this.value}-15`;
-                    loadSuggestions(this.value);
                 } else {
                     equipmentSelect.disabled = true;
                 }
@@ -546,24 +524,6 @@
                 e.preventDefault();
                 await submitFault();
             });
-        }
-
-        async function loadSuggestions(system) {
-            try {
-                const result = await apiCall('historySuggestions', { system });
-                if (result.ok && result.descriptionSuggestions) {
-                    const suggestionsDiv = document.getElementById('suggestions');
-                    suggestionsDiv.innerHTML = result.descriptionSuggestions
-                        .map(s => `<span class="badge bg-info me-2 mb-2" style="cursor:pointer;" onclick="setSuggestion('${s.replace(/'/g, "\\'")}', 'description')">${s}</span>`)
-                        .join('');
-                }
-            } catch (error) {
-                console.error('Error loading suggestions:', error);
-            }
-        }
-
-        function setSuggestion(value, fieldId) {
-            document.getElementById(fieldId).value = value;
         }
 
         async function submitFault() {
@@ -587,8 +547,9 @@
                     reportedBy: 'CMO User'
                 };
 
+                console.log('Submitting fault:', formData);
+
                 // Check duplicate first
-                console.log('Checking duplicate...', formData);
                 const dupResult = await apiCall('checkDuplicate', formData);
                 
                 if (dupResult.ok && dupResult.duplicate) {
@@ -598,11 +559,10 @@
                 }
 
                 // Create fault
-                console.log('Creating fault...', formData);
                 const result = await apiCall('createFault', formData);
 
                 if (result.ok) {
-                    showToast('success', `Fault registered: ${result.ticketId}`);
+                    showToast('success', `✅ Fault registered: ${result.ticketId}`);
                     document.getElementById('faultForm').reset();
                     document.getElementById('ticketId').textContent = `AFC-SSI-AUTO`;
                     
@@ -610,13 +570,39 @@
                         window.location.href = 'fault-list.html';
                     }, 2000);
                 } else {
-                    showToast('error', result.error || 'Failed to register fault');
+                    showToast('error', `❌ ${result.error || 'Failed to register fault'}`);
                 }
             } catch (error) {
                 console.error('Submit error:', error);
-                showToast('error', 'Error: ' + error.message);
+                showToast('error', `❌ Error: ${error.message}`);
             } finally {
                 showLoading(false);
+            }
+        }
+
+        async function apiCall(action, data = null) {
+            try {
+                const payload = { action, data };
+                console.log(`[API] ${action}`, payload);
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log(`[API] ${action} response:`, result);
+                return result;
+            } catch (error) {
+                console.error(`[API] ${action} failed:`, error);
+                throw error;
             }
         }
     </script>
