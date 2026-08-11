@@ -1,26 +1,28 @@
 /**
- * API Client - Central API client for all backend communication
+ * Google Sheet API Client - Fast data retrieval and storage
+ * ✅ CONFIGURED WITH YOUR DEPLOYMENT ID
  */
 
-class APIClient {
-    constructor(baseURL) {
-        this.baseURL = baseURL || 'https://script.google.com/macros/d/1hCvN5N_Jn-MadzrVFvE6doegN5OwEV5_HoEvIpT4W4w/usercallback';
+class GSheetAPI {
+    constructor(deploymentId) {
+        this.baseURL = `https://script.google.com/macros/d/${deploymentId}/usercallback`;
         this.timeout = 30000;
         this.retries = 3;
-        this.cache = cacheManager;
+        this.cache = new Map();
+        this.cacheTTL = 5 * 60 * 1000; // 5 minutes
     }
 
-    async request(method, endpoint, data = null) {
-        const url = `${this.baseURL}?action=${endpoint}`;
-        const options = {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
+    async request(action, data = null) {
+        const cacheKey = `${action}_${JSON.stringify(data)}`;
+        
+        // Check cache first
+        if (this.cache.has(cacheKey)) {
+            const cached = this.cache.get(cacheKey);
+            if (Date.now() - cached.timestamp < this.cacheTTL) {
+                console.log(`[CACHE HIT] ${action}`, cached.data);
+                return cached.data;
             }
-        };
-
-        if (data) {
-            options.body = JSON.stringify(data);
+            this.cache.delete(cacheKey);
         }
 
         let lastError;
@@ -28,192 +30,173 @@ class APIClient {
             try {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-                
-                options.signal = controller.signal;
-                const response = await fetch(url, options);
+
+                console.log(`[API] Calling ${action}...`, data);
+
+                const response = await fetch(this.baseURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ action, data }),
+                    signal: controller.signal
+                });
+
                 clearTimeout(timeoutId);
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
                 }
 
-                return await response.json();
+                const result = await response.json();
+                
+                // Cache successful responses
+                if (result.ok) {
+                    this.cache.set(cacheKey, {
+                        data: result,
+                        timestamp: Date.now()
+                    });
+                    console.log(`[API OK] ${action}`, result);
+                }
+
+                return result;
             } catch (error) {
                 lastError = error;
+                console.error(`[API RETRY ${i + 1}/${this.retries}] ${action}:`, error.message);
                 if (i < this.retries - 1) {
                     await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
                 }
             }
         }
 
+        console.error(`[API FAILED] ${action}`, lastError);
         throw lastError;
     }
 
-    // Dashboard
-    async getDashboardData() {
-        const cached = this.cache.get('dashboard');
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getDashboardData');
-        this.cache.set('dashboard', data);
-        return data;
+    // Fault operations
+    async createFault(faultData) {
+        return this.request('createFault', faultData);
     }
 
-    async getStatusSummary() {
-        const cached = this.cache.get('statusSummary');
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getStatusSummary');
-        this.cache.set('statusSummary', data);
-        return data;
+    async checkDuplicate(faultData) {
+        return this.request('checkDuplicate', faultData);
     }
 
-    async getRecentFaults() {
-        const cached = this.cache.get('recentFaults');
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getRecentFaults');
-        this.cache.set('recentFaults', data);
-        return data;
+    async listFaults(filters = {}) {
+        return this.request('listFaults', filters);
     }
 
-    // Faults
-    async registerFault(formData) {
-        const result = await this.request('POST', 'registerFault', formData);
-        this.cache.clear();
-        return result;
+    async getDashboard() {
+        return this.request('dashboard');
     }
 
-    async getFaultList(filters = {}) {
-        const cacheKey = `faultList_${JSON.stringify(filters)}`;
-        const cached = this.cache.get(cacheKey);
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getFaultList', filters);
-        this.cache.set(cacheKey, data);
-        return data;
-    }
-
-    async getFaultDetails(ticketId) {
-        const data = await this.request('POST', 'getFaultDetails', { ticketId });
-        return data;
-    }
-
-    async updateFaultStatus(ticketId, status) {
-        const result = await this.request('POST', 'updateFaultStatus', { ticketId, status });
-        this.cache.clear();
-        return result;
+    async listDuty() {
+        return this.request('listDuty');
     }
 
     async closeFault(ticketId, closureData) {
-        const result = await this.request('POST', 'closeFault', { ticketId, ...closureData });
+        return this.request('closeByCMO', {
+            ticketId,
+            ...closureData
+        });
+    }
+
+    async getHistorySuggestions(system, equipment = null) {
+        return this.request('historySuggestions', { system, equipment });
+    }
+
+    async getEquipmentHistory(stationCode, system, equipment, equipmentKey) {
+        return this.request('equipmentHistory', {
+            stationCode,
+            system,
+            equipment,
+            equipmentKey
+        });
+    }
+
+    async listFaultsWithStats(filters = {}) {
+        return this.request('listFaultsWithStats', filters);
+    }
+
+    // Clear cache
+    clearCache() {
         this.cache.clear();
-        return result;
+        console.log('[CACHE] Cleared all cached data');
     }
 
-    async checkDuplicateFault(data) {
-        try {
-            const result = await this.request('POST', 'checkDuplicateFault', data);
-            return result;
-        } catch (error) {
-            return null;
+    clearCacheForAction(action) {
+        for (let [key] of this.cache) {
+            if (key.startsWith(action)) {
+                this.cache.delete(key);
+            }
         }
-    }
-
-    // Equipment
-    async getEquipmentHistory(equipmentCode) {
-        const data = await this.request('POST', 'getEquipmentHistory', { equipmentCode });
-        return data;
-    }
-
-    // Reports
-    async getStatusReport(filters = {}) {
-        const cacheKey = `statusReport_${JSON.stringify(filters)}`;
-        const cached = this.cache.get(cacheKey);
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getStatusReport', filters);
-        this.cache.set(cacheKey, data);
-        return data;
-    }
-
-    async getSLAAnalysis(filters = {}) {
-        const cacheKey = `slaAnalysis_${JSON.stringify(filters)}`;
-        const cached = this.cache.get(cacheKey);
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getSLAAnalysis', filters);
-        this.cache.set(cacheKey, data);
-        return data;
-    }
-
-    async getMTTRReport(filters = {}) {
-        const cacheKey = `mttrReport_${JSON.stringify(filters)}`;
-        const cached = this.cache.get(cacheKey);
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getMTTRReport', filters);
-        this.cache.set(cacheKey, data);
-        return data;
-    }
-
-    async getRepeatFaults(filters = {}) {
-        const cacheKey = `repeatFaults_${JSON.stringify(filters)}`;
-        const cached = this.cache.get(cacheKey);
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getRepeatFaults', filters);
-        this.cache.set(cacheKey, data);
-        return data;
-    }
-
-    // Master Data
-    async getTeamList() {
-        const cached = this.cache.get('teamList');
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getTeamList');
-        this.cache.set('teamList', data, 60 * 60 * 1000); // 1 hour
-        return data;
-    }
-
-    async getStationList() {
-        const cached = this.cache.get('stationList');
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getStationList');
-        this.cache.set('stationList', data, 60 * 60 * 1000); // 1 hour
-        return data;
-    }
-
-    async getSystemList() {
-        const cached = this.cache.get('systemList');
-        if (cached) return cached;
-
-        const data = await this.request('POST', 'getSystemList');
-        this.cache.set('systemList', data, 60 * 60 * 1000); // 1 hour
-        return data;
+        console.log(`[CACHE] Cleared cache for ${action}`);
     }
 }
 
-// Global instance
-const apiClient = new APIClient();
+// ✅ CONFIGURED WITH YOUR DEPLOYMENT ID
+const gsheetAPI = new GSheetAPI('AKfycbzo28mkU9_YWzFawK7PcvpRrt7curzIOoEPhHfxYwRH5qmapBvUe3xN9zhmW3-5B93wbw');
 
-// Fallback for offline/demo mode
-async function getOfflineFaultList() {
-    return {
-        faults: [
-            {
-                ticketId: 'TKT-2024-00001',
-                station: 'AIRPORT',
-                system: 'AG',
-                equipment: 'Card Reader',
-                priority: 'High',
-                status: 'Open',
-                createdAt: moment().subtract(2, 'hours').format(),
-                description: 'Card reader not responding'
-            }
-        ],
-        total: 1
-    };
+// Helper functions
+async function createFault(faultData) {
+    try {
+        const result = await gsheetAPI.createFault(faultData);
+        if (!result.ok) {
+            throw new Error(result.error);
+        }
+        gsheetAPI.clearCacheForAction('listFaults');
+        gsheetAPI.clearCacheForAction('dashboard');
+        return result;
+    } catch (error) {
+        console.error('Create fault error:', error);
+        throw error;
+    }
+}
+
+async function checkDuplicate(faultData) {
+    try {
+        return await gsheetAPI.checkDuplicate(faultData);
+    } catch (error) {
+        console.error('Check duplicate error:', error);
+        return { ok: false, error: error.message };
+    }
+}
+
+async function getFaults(filters = {}) {
+    try {
+        return await gsheetAPI.listFaults(filters);
+    } catch (error) {
+        console.error('Get faults error:', error);
+        return { ok: false, data: [] };
+    }
+}
+
+async function getDashboard() {
+    try {
+        return await gsheetAPI.getDashboard();
+    } catch (error) {
+        console.error('Get dashboard error:', error);
+        return { ok: false, error: error.message };
+    }
+}
+
+async function getHistorySuggestions(system, equipment = null) {
+    try {
+        return await gsheetAPI.getHistorySuggestions(system, equipment);
+    } catch (error) {
+        console.error('Get suggestions error:', error);
+        return { ok: false, descriptionSuggestions: [] };
+    }
+}
+
+async function closeFault(ticketId, closureData) {
+    try {
+        const result = await gsheetAPI.closeFault(ticketId, closureData);
+        gsheetAPI.clearCacheForAction('listFaults');
+        gsheetAPI.clearCacheForAction('dashboard');
+        return result;
+    } catch (error) {
+        console.error('Close fault error:', error);
+        throw error;
+    }
 }
