@@ -4,7 +4,7 @@
 
 class APIClient {
     constructor(baseURL) {
-        this.baseURL = baseURL || 'https://script.google.com/macros/d/YOUR_DEPLOYMENT_ID/usercallback';
+        this.baseURL = baseURL || 'https://script.google.com/macros/d/1hCvN5N_Jn-MadzrVFvE6doegN5OwEV5_HoEvIpT4W4w/usercallback';
         this.timeout = 30000;
         this.retries = 3;
         this.cache = cacheManager;
