@@ -6,9 +6,7 @@
     <title>Register Fault - CMRL AFC</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
     
@@ -56,35 +54,14 @@
             margin-bottom: 20px;
         }
 
-        .form-group-wrapper {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group-wrapper label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #212529;
-        }
-
-        .form-group-wrapper label .required {
+        .badge-open {
+            background-color: #fde4e4;
             color: #dc3545;
-        }
-
-        .form-group-wrapper select,
-        .form-group-wrapper textarea {
-            font-size: 14px;
-            border: 1px solid #dee2e6;
+            padding: 4px 8px;
             border-radius: 4px;
-            padding: 10px 12px;
-        }
-
-        .form-group-wrapper select:focus,
-        .form-group-wrapper textarea:focus {
-            border-color: #0066cc;
-            box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
-            outline: none;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
         }
 
         .suggestions-section {
@@ -97,14 +74,7 @@
             font-size: 13px;
         }
 
-        .suggestions-section label {
-            font-weight: 600;
-            color: #0066cc;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .suggestions-section .suggestion-item {
+        .suggestion-item {
             display: inline-block;
             background-color: white;
             border: 1px solid #0066cc;
@@ -117,7 +87,7 @@
             font-size: 12px;
         }
 
-        .suggestions-section .suggestion-item:hover {
+        .suggestion-item:hover {
             background-color: #0066cc;
             color: white;
         }
@@ -129,65 +99,46 @@
             margin-top: 30px;
         }
 
-        .button-group button {
-            padding: 10px 24px;
-            font-size: 14px;
-            font-weight: 600;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            min-width: 120px;
-        }
-
-        .button-group .btn-clear {
+        .btn-clear {
             background-color: #f8f9fa;
             color: #0066cc;
             border: 1px solid #dee2e6;
+            padding: 10px 24px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
-        .button-group .btn-clear:hover {
+        .btn-clear:hover {
             background-color: #e9ecef;
         }
 
-        .button-group .btn-submit {
+        .btn-submit {
             background-color: #0066cc;
             color: white;
-        }
-
-        .button-group .btn-submit:hover {
-            background-color: #0052a3;
-        }
-
-        .badge-open {
-            background-color: #fde4e4;
-            color: #dc3545;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
+            padding: 10px 24px;
             font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-submit:hover {
+            background-color: #0052a3;
         }
 
         @media (max-width: 768px) {
             .info-row {
                 grid-template-columns: 1fr 1fr;
             }
-
             .form-row-2col {
                 grid-template-columns: 1fr;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .button-group button {
-                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar Navigation -->
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo-container">
@@ -232,19 +183,16 @@
             <div class="user-info">
                 <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
                 <div>
-                    <div class="user-name" id="userName">User</div>
-                    <small id="userRole" class="text-muted">CMO</small>
+                    <div class="user-name">CMO User</div>
+                    <small class="text-muted">CMO</small>
                 </div>
             </div>
-            <button class="btn btn-sm btn-outline-danger w-100 mt-2" id="logoutBtn">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Top Navigation Bar -->
+        <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
             <div class="container-fluid">
                 <button class="btn btn-light sidebar-toggle d-lg-none" id="sidebarToggleBtn">
@@ -257,16 +205,14 @@
         <!-- Page Content -->
         <div class="page-content">
             <div class="container-fluid">
-                <!-- Header -->
                 <div class="page-header mb-4">
                     <h1>Register Fault</h1>
                     <p class="text-muted">Create a new AFC fault ticket</p>
                 </div>
 
-                <!-- Main Card -->
+                <!-- Card -->
                 <div class="card">
                     <div class="card-body">
-                        <!-- Form Title -->
                         <h5 class="mb-2">Register New Fault</h5>
                         <p class="text-muted mb-4" style="font-size: 13px;">Ticket ID, date, time, reported by and status are automatic</p>
 
@@ -283,7 +229,7 @@
                                 </div>
                                 <div class="info-item">
                                     <span class="info-label">Reported By</span>
-                                    <span class="info-value" id="reportedBy">CMO User</span>
+                                    <span class="info-value">CMO User</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="info-label">Status</span>
@@ -292,53 +238,61 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Assigned Team</span>
-                                <span class="info-value" id="assignedTeam">AFC L1 Team</span>
+                                <span class="info-value">AFC L1 Team</span>
                             </div>
                         </div>
 
                         <!-- Form -->
-                        <form id="faultRegistrationForm">
-                            <!-- Zone & Station Row -->
+                        <form id="faultForm">
+                            <!-- Zone & Station -->
                             <div class="form-row-2col">
-                                <div class="form-group-wrapper">
-                                    <label>Zone <span class="required">*</span></label>
-                                    <select id="zone" required>
+                                <div>
+                                    <label class="form-label"><strong>Zone</strong> <span style="color: red;">*</span></label>
+                                    <select id="zone" class="form-select" required>
                                         <option value="">Select Zone</option>
+                                        <option value="Zone 1">Zone 1</option>
+                                        <option value="Zone 2">Zone 2</option>
+                                        <option value="Zone 3">Zone 3</option>
                                     </select>
                                 </div>
-                                <div class="form-group-wrapper">
-                                    <label>Station <span class="required">*</span></label>
-                                    <select id="station" required disabled>
+                                <div>
+                                    <label class="form-label"><strong>Station</strong> <span style="color: red;">*</span></label>
+                                    <select id="station" class="form-select" required disabled>
                                         <option value="">Select Zone First</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <!-- System & Equipment Row -->
+                            <!-- System & Equipment -->
                             <div class="form-row-2col">
-                                <div class="form-group-wrapper">
-                                    <label>System <span class="required">*</span></label>
-                                    <select id="system" required>
+                                <div>
+                                    <label class="form-label"><strong>System</strong> <span style="color: red;">*</span></label>
+                                    <select id="system" class="form-select" required>
                                         <option value="">Select System</option>
+                                        <option value="AG">AG (Automatic Gate)</option>
+                                        <option value="NCMC">NCMC (Non-Contact Card)</option>
+                                        <option value="QR">QR (QR Code)</option>
+                                        <option value="TOM">TOM (Token-Based)</option>
+                                        <option value="Parking">Parking</option>
                                     </select>
                                 </div>
-                                <div class="form-group-wrapper">
-                                    <label>Equipment <span class="required">*</span></label>
-                                    <select id="equipment" required disabled>
+                                <div>
+                                    <label class="form-label"><strong>Equipment</strong> <span style="color: red;">*</span></label>
+                                    <select id="equipment" class="form-select" required disabled>
                                         <option value="">Select System First</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <!-- Equipment Number & Priority Row -->
+                            <!-- Equipment Number & Priority -->
                             <div class="form-row-2col">
-                                <div class="form-group-wrapper">
-                                    <label id="equipmentNumberLabel">AG Number <span class="required">*</span></label>
-                                    <input type="text" id="equipmentNumber" placeholder="Example: AG-15" required>
+                                <div>
+                                    <label class="form-label"><strong id="equipLabel">Equipment Number</strong> <span style="color: red;">*</span></label>
+                                    <input type="text" id="equipNumber" class="form-control" placeholder="Example: AG-15" required>
                                 </div>
-                                <div class="form-group-wrapper">
-                                    <label>Priority <span class="required">*</span></label>
-                                    <select id="priority" required>
+                                <div>
+                                    <label class="form-label"><strong>Priority</strong> <span style="color: red;">*</span></label>
+                                    <select id="priority" class="form-select" required>
                                         <option value="">Select Priority</option>
                                         <option value="High">High (0-2 hrs)</option>
                                         <option value="Medium">Medium (0-6 hrs)</option>
@@ -348,16 +302,16 @@
                                 </div>
                             </div>
 
-                            <!-- Fault Description -->
-                            <div class="form-group-wrapper" style="margin-bottom: 0;">
-                                <label>Fault Description <span class="required">*</span></label>
-                                <textarea id="faultDescription" rows="6" placeholder="Describe the observed fault clearly" required></textarea>
+                            <!-- Description -->
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Fault Description</strong> <span style="color: red;">*</span></label>
+                                <textarea id="description" class="form-control" rows="6" placeholder="Describe the observed fault clearly" required></textarea>
                             </div>
 
-                            <!-- Suggestions Section -->
+                            <!-- Suggestions -->
                             <div class="suggestions-section">
-                                <label>Suggestions from history</label>
-                                <div id="descriptionSuggestions">
+                                <label><strong>Suggestions from history</strong></label>
+                                <div id="suggestions">
                                     <span style="color: #6c757d;">Unable to load suggestions.</span>
                                 </div>
                             </div>
@@ -378,51 +332,134 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     
-    <script src="js/cache.js"></script>
-    <script src="js/notifications.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/master-data.js"></script>
-    <script src="js/validators.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/register-fault.js"></script>
-
     <script>
-        // Update info section on page load
-        document.addEventListener('DOMContentLoaded', () => {
+        // Station data
+        const STATIONS = {
+            'Zone 1': [
+                {code: 'SSI', name: 'EKKATTUTHANGAL'},
+                {code: 'SAN', name: 'ASHOK NAGAR'},
+                {code: 'SVA', name: 'VADAPALANI'},
+                {code: 'SAR', name: 'ARUMBAKKAM'},
+                {code: 'SCM', name: 'PURATCHI THALAIVI'},
+                {code: 'SKO', name: 'KOYAMBEDU'},
+                {code: 'STI', name: 'THIRUMANGALAM'},
+                {code: 'SAT', name: 'ANNA NAGAR TOWER'},
+                {code: 'SAE', name: 'ANNA NAGAR EAST'},
+                {code: 'SSN', name: 'SHENOY NAGAR'},
+                {code: 'SPC', name: 'PACHIAPPAS COLLEGE'},
+                {code: 'SKM', name: 'KILPAUK'},
+                {code: 'SNP', name: 'NEHRU PARK'},
+                {code: 'SEG', name: 'EGMORE'},
+                {code: 'SMM', name: 'ST. THOMAS MOUNT'}
+            ],
+            'Zone 2': [
+                {code: 'SAP', name: 'AIRPORT'},
+                {code: 'SME', name: 'MEENAMBAKKAM'},
+                {code: 'SOT', name: 'NANGANALLUR ROAD'},
+                {code: 'SAL', name: 'ARIGNAR ANNA ALANDUR'},
+                {code: 'SGU', name: 'GUINDY'},
+                {code: 'SLM', name: 'LITTLE MOUNT'},
+                {code: 'SSA', name: 'SAIDAPET'},
+                {code: 'SCR', name: 'NANDANAM'},
+                {code: 'STE', name: 'THENAMPET'},
+                {code: 'SGM', name: 'AG DMS'},
+                {code: 'STL', name: 'THOUSAND LIGHT'},
+                {code: 'SLI', name: 'LIC'},
+                {code: 'SGE', name: 'GOVERNMENT ESTATE'}
+            ],
+            'Zone 3': [
+                {code: 'SCC', name: 'THALAIVAR DR.M.G.RAMACHANDRA'},
+                {code: 'SHC', name: 'HIGH COURT'},
+                {code: 'SMA', name: 'MANNADI'},
+                {code: 'SWA', name: 'WASHERMENPET'},
+                {code: 'STC', name: 'Thyagaraya College'},
+                {code: 'STR', name: 'Tondiarpet'},
+                {code: 'SNW', name: 'New Washermen pet'},
+                {code: 'STG', name: 'Toll Gat'},
+                {code: 'SKP', name: 'Kaladipet'},
+                {code: 'STT', name: 'Thiruvotriyur Theredi'},
+                {code: 'STV', name: 'Thiruvotriyur'},
+                {code: 'SWN', name: 'WimcoNagar'},
+                {code: 'SWD', name: 'WimcoNagar Depot'}
+            ]
+        };
+
+        // Equipment data
+        const EQUIPMENT = {
+            'AG': ['Card Reader', 'Gate Motor', 'Door Sensor', 'Control Panel', 'LED Display'],
+            'NCMC': ['Card Reader', 'Validator', 'Server', 'Card Stock'],
+            'QR': ['QR Scanner', 'QR Printer', 'Display'],
+            'TOM': ['Token Dispenser', 'Token Collector', 'Counting Machine'],
+            'Parking': ['Barrier Motor', 'ANPR Camera', 'Display']
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            generateTicketId();
+            setupEventListeners();
+        });
+
+        function updateDateTime() {
             const now = moment();
             document.getElementById('dateTime').textContent = now.format('DD MMM YYYY, h:mm a');
-            
-            // Generate random ticket ID
-            const ticketId = `AFC-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 100000)).padStart(5, '0')}`;
-            document.getElementById('ticketId').textContent = ticketId;
-        });
+        }
 
-        // Update equipment number label based on system selection
-        document.getElementById('system').addEventListener('change', function() {
-            const system = this.value;
-            const label = document.getElementById('equipmentNumberLabel');
-            const systemNames = {
-                'AG': 'AG Number',
-                'NCMC': 'Card Reader #',
-                'QR': 'QR Scanner #',
-                'TOM': 'Token Machine #',
-                'Parking': 'Barrier #'
-            };
-            if (system) {
-                label.innerHTML = `${systemNames[system] || 'Equipment #'} <span class="required">*</span>`;
-            }
-        });
+        function generateTicketId() {
+            const random = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+            document.getElementById('ticketId').textContent = `AFC-SSI-${random}`;
+        }
+
+        function setupEventListeners() {
+            const zoneSelect = document.getElementById('zone');
+            const stationSelect = document.getElementById('station');
+            const systemSelect = document.getElementById('system');
+            const equipmentSelect = document.getElementById('equipment');
+
+            // Zone change
+            zoneSelect.addEventListener('change', function() {
+                stationSelect.innerHTML = '<option value="">Select Station</option>';
+                if (this.value) {
+                    STATIONS[this.value].forEach(station => {
+                        const opt = document.createElement('option');
+                        opt.value = station.code;
+                        opt.textContent = `${station.code} - ${station.name}`;
+                        stationSelect.appendChild(opt);
+                    });
+                    stationSelect.disabled = false;
+                } else {
+                    stationSelect.disabled = true;
+                }
+            });
+
+            // System change
+            systemSelect.addEventListener('change', function() {
+                equipmentSelect.innerHTML = '<option value="">Select Equipment</option>';
+                if (this.value) {
+                    EQUIPMENT[this.value].forEach(eq => {
+                        const opt = document.createElement('option');
+                        opt.value = eq;
+                        opt.textContent = eq;
+                        equipmentSelect.appendChild(opt);
+                    });
+                    equipmentSelect.disabled = false;
+                    document.getElementById('equipLabel').textContent = this.value + ' Number';
+                } else {
+                    equipmentSelect.disabled = true;
+                }
+            });
+
+            // Form submit
+            document.getElementById('faultForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Fault registered!\nTicket: ' + document.getElementById('ticketId').textContent);
+                this.reset();
+            });
+        }
     </script>
 </body>
 </html>
