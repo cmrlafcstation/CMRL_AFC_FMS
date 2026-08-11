@@ -1,10 +1,11 @@
 /**
  * Google Sheet API Client - Fast data retrieval and storage
- * ✅ CONFIGURED WITH YOUR DEPLOYMENT ID
+ * ✅ FIXED VERSION - Uses deploymentId parameter correctly
  */
 
 class GSheetAPI {
     constructor(deploymentId) {
+        // ✅ FIXED: Now uses the deploymentId parameter instead of hardcoding
         this.baseURL = `https://script.google.com/macros/d/${deploymentId}/usercallback`;
         this.timeout = 30000;
         this.retries = 3;
@@ -31,7 +32,7 @@ class GSheetAPI {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
-                console.log(`[API] Calling ${action}...`, data);
+                console.log(`[API] Calling ${action}...`);
 
                 const response = await fetch(this.baseURL, {
                     method: 'POST',
@@ -134,8 +135,8 @@ class GSheetAPI {
     }
 }
 
-// ✅ CONFIGURED WITH YOUR DEPLOYMENT ID
-const gsheetAPI = new GSheetAPI('AKfycbzo28mkU9_YWzFawK7PcvpRrt7curzIOoEPhHfxYwRH5qmapBvUe3xN9zhmW3-5B93wbw');
+// ✅ FIXED: Now uses YOUR DEPLOYMENT ID (not spreadsheet ID)
+const gsheetAPI = new GSheetAPI('AKfycbw1duikfe-fN0rs39JOZvNlBH8p_TwRsvd5CtQPASYjD0aze-hnh_lQUGEWf2IPIkJqFw');
 
 // Helper functions
 async function createFault(faultData) {
