@@ -136,7 +136,7 @@ class GSheetAPI {
 }
 
 // ✅ FIXED: Now uses YOUR DEPLOYMENT ID (not spreadsheet ID)
-const gsheetAPI = new GSheetAPI('AKfycbw1duikfe-fN0rs39JOZvNlBH8p_TwRsvd5CtQPASYjD0aze-hnh_lQUGEWf2IPIkJqFw');
+const gsheetAPI = new GSheetAPI('AKfycbzo28mkU9_YWzFawK7PcvpRrt7curzIOoEPhHfxYwRH5qmapBvUe3xN9zhmW3-5B93wbw');
 
 // Helper functions
 async function createFault(faultData) {
