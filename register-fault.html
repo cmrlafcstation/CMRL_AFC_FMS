@@ -355,7 +355,7 @@
     
     <script>
         // ✅ CONFIGURED WITH YOUR DEPLOYMENT ID
-        const API_URL = 'https://script.google.com/macros/d/AKfycbzo28mkU9_YWzFawK7PcvpRrt7curzIOoEPhHfxYwRH5qmapBvUe3xN9zhmW3-5B93wbw/usercallback';
+        const API_URL = 'https://script.google.com/macros/d/AKfycbw1duikfe-fN0rs39JOZvNlBH8p_TwRsvd5CtQPASYjD0aze-hnh_lQUGEWf2IPIkJqFw/usercallback';
 
         // Station data
         const STATIONS = {
@@ -532,19 +532,29 @@
 
                 const stationCode = document.getElementById('station').value;
                 const stationName = document.getElementById('station').selectedOptions[0]?.text || '';
+                const system = document.getElementById('system').value;
+                
+                // ✅ FIX: NOW CAPTURING DATE AND TIME!
+                const now = new Date();
+                const reportedDate = now.toLocaleDateString('en-IN');  // DD/MM/YYYY format
+                const reportedTime = now.toLocaleTimeString('en-IN');  // HH:MM:SS AM/PM format
                 
                 const formData = {
                     zone: document.getElementById('zone').value,
                     stationCode: stationCode,
                     stationName: stationName.split(' - ')[1] || stationName,
-                    system: document.getElementById('system').value,
+                    system: system,
                     equipment: document.getElementById('equipment').value,
-                    agNumber: document.getElementById('system').value === 'AG' ? document.getElementById('equipNumber').value : '',
-                    parkingSlot: document.getElementById('system').value === 'Parking' ? document.getElementById('equipNumber').value : '',
-                    installedAt: document.getElementById('system').value === 'NCMC' || document.getElementById('system').value === 'PQR' ? document.getElementById('equipNumber').value : '',
+                    agNumber: system === 'AG' ? document.getElementById('equipNumber').value : '',
+                    parkingSlot: system === 'Parking' ? document.getElementById('equipNumber').value : '',
+                    installedAt: (system === 'NCMC' || system === 'PQR') ? document.getElementById('equipNumber').value : '',
                     priority: document.getElementById('priority').value || 'Medium',
                     description: document.getElementById('description').value,
-                    reportedBy: 'CMO User'
+                    reportedBy: 'CMO User',
+                    reportedDate: reportedDate,   // ✅ ADDED
+                    reportedTime: reportedTime,   // ✅ ADDED
+                    status: 'Open',
+                    assignedTeam: system === 'NCMC' ? 'NCMC Team' : 'AFC L1 Team'
                 };
 
                 console.log('Submitting fault:', formData);
